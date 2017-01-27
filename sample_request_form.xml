@@ -1,0 +1,111 @@
+<?xml version="1.0"?><!DOCTYPE pdf PUBLIC "-//big.faceless.org//report" "report-1.1.dtd">
+<pdf>
+<head>
+<meta name="title" value="${rec.name}"/>
+<macrolist>
+<macro id="pgnum">
+<p align="center">
+Page <pagenumber/> of <totalpages/> - ${rec.name}
+</p>
+</macro>
+<macro id="pghead">
+</macro>
+</macrolist>
+<style>
+body {font-family: sans-serif; }
+table.items {
+    font-size: 12pt;
+    border: 1px solid black;
+    border-collapse: collapse;
+    margin-top: 30px;
+}
+table.items th {
+    border: 1px solid black;
+}
+table.items td {
+   font-size: 10pt;
+    border: 1px solid black;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+table.top {
+width: 100%;
+border-bottom: 1px dashed black;
+margin-bottom: 10px;
+}
+td.block {
+border: 1px solid black;
+margin-bottom: 5px;
+}
+p {
+margin-bottom: 5px;
+}
+</style>
+</head>
+<body header="pghead" footer="pgnum" footer-height="30px">
+<table class="top">
+<tr>
+<td><p style="font-size: 22px;font-weight:bold;">Sample Request</p></td>
+<td style="font-size:18px;font-weight:bold;align=right;">${rec.name}</td>
+</tr>
+</table>
+<!-- Address and data blocks -->
+<table class="addr" style="width: 100%">
+<tr>
+<td style="font-size:16px;">
+<p style="font-size: 14px; font-weight: bold">${rec.custrecord_sr_customer} </p>
+<table>
+<tr><th>Title</th><td>${rec.custrecord_cb_samplereq_title}</td></tr>
+<tr><th>Due Date</th><td>${rec.custrecord_cb_samplereq_due_date}</td></tr>
+<tr><th>Priority</th><td>${rec.custrecord_cb_samplereq_priority}</td></tr>
+<tr><th>Status</th><td>${rec.custrecord_cb_samplereq_status}</td></tr>
+<tr><th>Location</th><td>${rec.custrecord_cb_samplereq_location}</td></tr>
+</table>
+</td>
+<td class="block"><b style="font-size: 16px;">Ship To</b>
+<br/>${rec.custrecord_cb_samplereq_full_address}
+</td>
+</tr>
+</table>
+
+<table style="width: 100%; font-size:11px;">
+<tr><th> </th><td> </td></tr>
+<tr><th>Contact</th><td>${rec.custrecordcb_samplereq_ccontactname}</td></tr>
+<tr><th>Email Address</th><td>${rec.custrecord_cb_samplereq_email}</td><th>Assigned to</th><td>${rec.custrecord_cb_samplereq_assigned_to}</td></tr>
+<tr><th>Phone</th><td>${rec.custrecord_cb_samplereq_phone}</td><th>Sales Rep</th><td>${rec.custrecord_cb_samplereq_salesrep}</td></tr>
+<tr><th>Comments</th><td>${rec.custrecord_cb_samplereq_comments}</td><th>Lead Source</th><td>${rec.custrecord_campaign_id}</td></tr>
+<tr><th>Send Follow Up Email</th><td>${rec.custrecord_cb_samplereq_email_follow_up}</td><th>Create Follow Up Task</th><td>${rec.custrecord_cb_samplereq_create_follow_up}</td></tr>
+<tr><th>Date Created</th><td>${rec.created}</td><th>Last Modified by</th><td>${rec.lastmodifiedby}</td></tr>
+</table>
+
+<!--<table>-->
+
+<!--<tr><th>Assigned to</th><td>${rec.custrecord_cb_samplereq_assigned_to}</td></tr>-->
+<!--<tr><th>Sales Rep</th><td>${rec.custrecord_cb_samplereq_salesrep}</td></tr>-->
+<!--<tr><th>Lead Source</th><td>${rec.custrecord_campaign_id}</td></tr>-->
+<!--<tr><th>Create Follow Up Task</th><td>${rec.custrecord_cb_samplereq_create_follow_up}</td></tr>-->
+<!--<tr><th>Send Follow Up Email</th><td>${rec.custrecord_cb_samplereq_email_follow_up}</td></tr>-->
+<!--</table>-->
+
+
+<table id="items" class="items" style="width: 100%">
+<thead>
+<tr><th>Bin</th><th>Qty</th><th>Item #</th><th>Description</th></tr>
+</thead>
+<tbody>
+<#list rec.recmachcustrecord_sample_id as item>
+<tr>
+<td>${item.custrecord_sample_bin}</td>
+<td>${item.custrecord1}</td>
+<td>${item.custrecord_sample_item}</td>
+<td>${item.custrecord2}</td>
+</tr>
+</#list>
+</tbody>
+
+</table>
+
+</body>
+</pdf>
