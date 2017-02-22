@@ -24,6 +24,9 @@ If you save the PDF output, it will create a PDF file named for the 'templateFil
 # Gotchas
 This example works with custom records we defined that look alot like a sales order. So, the template is not a plug and play file. But it gives you some examples to 'sift through'.
 
+Also, this does NOT pass the nlobjConfiguration object found on native Netsuite PDF templates.
+Ths is due to a minor flaw in Netsuite Freemarker interface that only allows you to bind nlobjRecord types.
+
 # License
 This is free and unencumbered software released into the public domain.
 
