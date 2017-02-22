@@ -5,13 +5,16 @@ This is done by calling a suitelet that accepts the following URL query paramete
 * 'f' - Format name. This is the name of the format file in the file area WITHOUT PATH or XML extension.
 * 'recid' (internal id) of the record to print.
 
-# PdfWriter Script
-The script PdfWriter.js is the user event script tied to the record you wish to print. It requires 1 parameter set in the deploymnet
-
-* custscript_template_path: This is the file path int the Netsuite file folder where the format files can be found. ("Templates > Custom Templates").
+# User Event Script
+The script user_event_bfo.js is a sample user event script that shows how to put a button on a record in view mode that will call the PdfWriter suitelet.
 
 # PDF Generator Script (PdfWriter.js)
 This is the suitelet script that is called by the client record via the button added via a user event script. The suitlet script will use the 'createPDF' function.
+
+## Deployment
+The script deployment has the following parameter that needs to be entered.
+
+* custscript_template_path: This is the file path int the Netsuite file folder where the format files can be found. ("Templates > Custom Templates").
 
 # Usage
 The PDF is generated via a custom button in view mode on a record. The button is added to the form through a user event script attached to the record.
