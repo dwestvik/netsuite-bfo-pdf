@@ -14,16 +14,42 @@
  * 
  * The key is the Freemarker template, must contain the syntax of the BFO PDF creater.
  * 
+ *  URL parameters 
+ *  rec - The name of the record type to load via nlapiLoadRecord()
+ *  f - Freemarker / BFO formatted template file (WITHOUT EXTENSION) used to render record data. This script will add the .XML
+ *  recid - Internal ID of the current record
  * 
- *  Script parameters (set in deployment)
- *  custscript_record_type - The name of the record type to load via nlapiLoadRecord()
- *  custscript_pdf_template - Freemarker / BFO formatted template used to render record data.
- *  custscript_pdf_docname - Name of PDF file (if you choose to save it)
+ * Deployment Parameters:
+ * Template Path
+ * Used to define where in the file area the template XML file can be found. (No trailing /)
+ * 
+ * Example template path:
+ * Templates/Custom Templates
+ * 
+ * 
+ * The URL format is:
+ * https://system.sandbox.netsuite.com/app/site/hosting/scriptlet.nl?script=188&deploy=1&rec=customrecord_sample_request&f=sample_request_form&recid=122
+ * 
+ *  To put a button on a form to print, put the following in a User Event "beforeLoad'
+ *  The key is the ending part: &rec=customrecord_sample_request&f=sample_request_form&recid=122
  *  
+ *  Parameters:  record: customrecord_sample_request   form: sample_request_form  (This is a file named 'sample_request_form.xml')   recid: Internal id from record (returned by nlapiGetRecordId())
+ *  
+ *  EXAMPLE OF USER SCRIPT:  (Adds button on view of form to print document)
+    if (type == 'view') {
+        var scriptForm = "window.open(nlapiResolveURL(\'SUITELET\', \'customscript_cb_pdf_printer\', \'customdeploy_cb_pdf_printer\') + \'&rec=customrecord_sample_request&f=sample_request_form&recid=\' + nlapiGetRecordId());";
+        form.addButton('custpage_printitempick','New Pick', scriptForm);
+    } 
+
+ *
+ * The URL can be generated in a text field on a saved search to provide a link to print the document
+ *  
+ *   Text Formula for view (Assumes system.na1 datacenter, scriptid=187 and deployment=1)
+ *   '<a name="PrintPick" id="PrintPick" href="https://system.na1.netsuite.com/app/site/hosting/scriptlet.nl?script=187&deploy=1&rec=RECORD_TYPE&f=FORM_FILENAME&recid='||{internalid}||'"  target="_blank" >Link Text</a>'
  * 
  * Version    Date            Author           Remarks
  * 1.00       07 Dec 2016     dwestvik
- *
+ * 2.00       Feb 2017        dwestvik         Update to use createPDF as new version. Deployment points to template path. All params passed in url
  */
 
 /**
@@ -31,36 +57,79 @@
  * @param {nlobjResponse} response Response object
  * @returns {Void} Any output is written via response object
  */
-function generatePDF(request, response){
+function createPDF(request, response){
 	 try {
-	        // Pull settings from scipt deployment.
-			var recordType = nlapiGetContext().getSetting('SCRIPT', 'custscript_record_type');
-			var pdfTemplate = nlapiGetContext().getSetting('SCRIPT', 'custscript_pdf_template');
-			var pdfDocName = nlapiGetContext().getSetting('SCRIPT', 'custscript_pdf_filename');
+			var templatePath = nlapiGetContext().getSetting('SCRIPT', 'custscript_template_path');
 		 
-		 	// Get 'recid' from URL query
+			
+			var recordType = request.getParameter('rec');
+	        if(! recordType) {
+	            response.write('Record Type missing (rec)');
+	            return;
+	        }
+			
+		 	// Get 'sample_id' from URL query
+			var format = request.getParameter('f');
+	        if(! format) {
+	            response.write('format filename missing (f)');
+	            return;
+	        }
+			
 	        var id = request.getParameter('recid');
 	        if(! id) {
-	            response.write('recid parameter missing');
+	            response.write('Record ID missing (recid)');
 	            return;
 	        }
 
 	        // Load the record
 	        var record = nlapiLoadRecord(recordType, id);
 	        
+
+        	//response.write('Record: ' + JSON.stringify(record));
+        	//return;
+
+	        
+	        // Build the template path in the file dir
+	        var pdfTemplate = templatePath + '/' + format + '.xml';
+	        
+	        // Build the name of the saved PDF file.  (format name + record name)
+	        //var pdfDocName = format + '_' + record.getFieldValue('name') + '.pdf';
+	        var pdfDocName = format + '_' + record.getFieldValue('id') +  '.pdf';
+	        
+	        // Load the template file
+	        //var template = nlapiLoadFile(pdfTemplate);
+	        
+	        // Parse the XML to pull out other params  (Future use)
+	        //var xml = nlapiStringToXML(template);
+	        
 	        // Create a Freemarker render instance
 	        var renderer = nlapiCreateTemplateRenderer();
 	        
 	        // Set the Freemarker template file (text)
+	        //var template = nlapiLoadFile('Templates/Custom Templates/template_form.xml');
 	        var template = nlapiLoadFile(pdfTemplate);
-	        renderer.setTemplate(template.getValue());  				// Passes in raw string of template to be transformed by FreeMarker
+	        renderer.setTemplate(template.getValue());			// Passes in raw string of template to be transformed by FreeMarker
 	
 	        // Binds [record] object to Freemarker template variable ('rec')    [${rec.fldname}]
+	        
 	        renderer.addRecord('rec', record);
+	        renderer.addRecord('record', record);
+
 	        
 	        // Call Freemarker to render output of template
 	        //   Returns (XML) template content interpreted by FreeMarker as XML string that can be passed to the nlapiXMLToPDF function.
 	        var xml = renderer.renderToString();
+
+	        
+	        xml.replace(/&/g, '&amp;')
+	        .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&apos;');
+            
+	        //response.setContentType('XML', pdfDocName, 'inline');
+	        //response.write(xml);
+        	//return;
 
 	        // Call BFO xml to PDF converter (The Freemarker template must output valid BFO input document)
 	        var pdf = nlapiXMLToPDF(xml);
@@ -73,5 +142,4 @@ function generatePDF(request, response){
 	        response.write(err);
 	        return;
 	    }
-
 }

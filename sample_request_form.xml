@@ -80,16 +80,6 @@ margin-bottom: 5px;
 <tr><th>Date Created</th><td>${rec.created}</td><th>Last Modified by</th><td>${rec.lastmodifiedby}</td></tr>
 </table>
 
-<!--<table>-->
-
-<!--<tr><th>Assigned to</th><td>${rec.custrecord_cb_samplereq_assigned_to}</td></tr>-->
-<!--<tr><th>Sales Rep</th><td>${rec.custrecord_cb_samplereq_salesrep}</td></tr>-->
-<!--<tr><th>Lead Source</th><td>${rec.custrecord_campaign_id}</td></tr>-->
-<!--<tr><th>Create Follow Up Task</th><td>${rec.custrecord_cb_samplereq_create_follow_up}</td></tr>-->
-<!--<tr><th>Send Follow Up Email</th><td>${rec.custrecord_cb_samplereq_email_follow_up}</td></tr>-->
-<!--</table>-->
-
-
 <table id="items" class="items" style="width: 100%">
 <thead>
 <tr><th>Bin</th><th>Qty</th><th>Item #</th><th>Description</th></tr>
