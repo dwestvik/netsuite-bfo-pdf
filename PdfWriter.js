@@ -84,10 +84,6 @@ function createPDF(request, response){
 	        // Load the record
 	        var record = nlapiLoadRecord(recordType, id);
 	        
-
-        	//response.write('Record: ' + JSON.stringify(record));
-        	//return;
-
 	        
 	        // Build the template path in the file dir
 	        var pdfTemplate = templatePath + '/' + format + '.xml';
@@ -95,13 +91,7 @@ function createPDF(request, response){
 	        // Build the name of the saved PDF file.  (format name + record name)
 	        //var pdfDocName = format + '_' + record.getFieldValue('name') + '.pdf';
 	        var pdfDocName = format + '_' + record.getFieldValue('id') +  '.pdf';
-	        
-	        // Load the template file
-	        //var template = nlapiLoadFile(pdfTemplate);
-	        
-	        // Parse the XML to pull out other params  (Future use)
-	        //var xml = nlapiStringToXML(template);
-	        
+	        	        
 	        // Create a Freemarker render instance
 	        var renderer = nlapiCreateTemplateRenderer();
 	        
@@ -110,8 +100,7 @@ function createPDF(request, response){
 	        var template = nlapiLoadFile(pdfTemplate);
 	        renderer.setTemplate(template.getValue());			// Passes in raw string of template to be transformed by FreeMarker
 	
-	        // Binds [record] object to Freemarker template variable ('rec')    [${rec.fldname}]
-	        
+	        // Binds [record] object to Freemarker template variable ('rec')    [${rec.fldname}]  / also bind to record to match native Netsuite style templates.
 	        renderer.addRecord('rec', record);
 	        renderer.addRecord('record', record);
 
