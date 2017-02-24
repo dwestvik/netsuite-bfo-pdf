@@ -1,5 +1,5 @@
-# netsuite-bfo
-Generic form printer for Netsuite via Freemarker and BFO.
+# netsuite-bfo-pdf
+Generic PDF form printer for Netsuite via Freemarker and BFO.
 This is done by calling a suitelet that accepts the following URL query parameters.
 * 'rec' - Name of the record. Can be native Netsuite record or custom record.
 * 'f' - Format name. This is the name of the format file in the file area WITHOUT PATH or XML extension.
